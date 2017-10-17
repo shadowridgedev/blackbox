@@ -59,10 +59,10 @@ public abstract class AcceptanceTest extends Blackbox {
 			Status expectedStatus = responseAnnotation.httpStatus();
 			
 			if (expectedBody != null) {
-				JSONAssert.assertEquals(restResponse.getBody(), expectedBody, false);
+				JSONAssert.assertEquals(expectedBody, restResponse.getBody(), false);
 			}
 			
-			Assert.assertEquals(restResponse.getStatus().getStatusCode(), expectedStatus.getStatusCode());
+			Assert.assertEquals(expectedStatus.getStatusCode(), restResponse.getStatus().getStatusCode());
 		}
 	}
 	
