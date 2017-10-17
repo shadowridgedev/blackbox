@@ -22,17 +22,16 @@ import com.github.rubenssvn.blackbox.annotation.Request;
 import com.github.rubenssvn.blackbox.annotation.Response;
 import com.github.rubenssvn.blackbox.database.DatabaseLoader;
 import com.github.rubenssvn.blackbox.exception.AcceptanceTestException;
-import com.github.rubenssvn.blackbox.http.RestClient;
 import com.github.rubenssvn.blackbox.http.RestResponse;
 
-public class AcceptanceTest {
+public abstract class AcceptanceTest extends Blackbox {
 	
 	private static final String TEARDOWN_FILE = "teardown.sql";
 	private static final String SETUP_FILE = "setup.sql";
-	private static final String PROPERTIES_FILE = "blackbox.properties";
 	private static final String ENDPOINT_BASE_URL_PROP = "endpoint.base.url";
 	private static final String SCENARIOS_PATH_PROP = "scenarios.base.path";
 	private static final String RESOURCE_ENCODING = "UTF-8";
+	private static final String PROPERTIES_FILE = "blackbox.properties";
 	
 	private Properties properties = new Properties();
 	
@@ -41,43 +40,71 @@ public class AcceptanceTest {
 	
 	@Before
 	public void setup() throws Exception {
-		setupDatabase();
+		loadProperties();
+		databaseSetup();
+		
+		loadDataset(getApi(), getTestMethod().getAnnotation(Dataset.class));
 		
 		Request requestAnnotation = getTestMethod().getAnnotation(Request.class);
-		Api apiAnnotation = getClass().getAnnotation(Api.class);
 		Response responseAnnotation = getTestMethod().getAnnotation(Response.class);
-		Dataset datasetAnnotation = getTestMethod().getAnnotation(Dataset.class);
 		
-		String api = apiAnnotation.value();
-		String path = requestAnnotation.path();
-		
-		loadProperties();
-		loadDataset(api, datasetAnnotation);
-		
-		String endpoint = properties.getProperty(ENDPOINT_BASE_URL_PROP) + api + path;
-		RestResponse restResponse = RestClient.call(endpoint, getResourceAsString(api, requestAnnotation.body()), requestAnnotation.method());
-
-		String expectedBody = getResourceAsString(api, responseAnnotation.body());
-		Status expectedStatus = responseAnnotation.httpStatus();
-
-		if (expectedBody != null) {
-			JSONAssert.assertEquals(restResponse.getBody(), expectedBody, false);
+		if (requestAnnotation != null && responseAnnotation != null) {
+			RestResponse restResponse = requestHandler()
+											.method(requestAnnotation.method())
+											.body(requestAnnotation.body())
+											.path(requestAnnotation.path())
+											.call();
+			
+			String expectedBody = getJsonAsString(responseAnnotation.body());
+			Status expectedStatus = responseAnnotation.httpStatus();
+			
+			if (expectedBody != null) {
+				JSONAssert.assertEquals(restResponse.getBody(), expectedBody, false);
+			}
+			
+			Assert.assertEquals(restResponse.getStatus().getStatusCode(), expectedStatus.getStatusCode());
 		}
-
-		Assert.assertEquals(restResponse.getStatus().getStatusCode(), expectedStatus.getStatusCode());
 	}
 	
 	@After
 	public void teardown() {
-		teardownDatabase();
+		databaseTeardown();
 	}
 	
-	private void setupDatabase() {
+	@Override
+	public String getApi() {
+		Api apiAnnotation = getClass().getAnnotation(Api.class);
+		String api = apiAnnotation.value();
+		return api;
+	}
+	
+	@Override
+	public String getEndpoint() {
+		return properties.getProperty(ENDPOINT_BASE_URL_PROP);
+	}
+	
+	@Override
+	public String getJsonAsString(String file) {
+		String resourceAsString = null;
+		String api = getApi();
+		
+		if (StringUtils.isNotBlank(file)) {
+			try {
+				resourceAsString = IOUtils.toString(getClass().getResourceAsStream(getFileInResourcePath(api, file)), RESOURCE_ENCODING);
+			} catch (IOException e) {
+				throw new AcceptanceTestException(e);
+			}
+		}
+		
+		return resourceAsString;
+	}
+	
+	private void databaseSetup() {
 		DatabaseLoader loader = new DatabaseLoader();
 		loader.executeSqlFile(properties, getClass().getResourceAsStream(getFileInBasePath(SETUP_FILE)));
 	}
 	
-	private void teardownDatabase() {
+	private void databaseTeardown() {
 		DatabaseLoader loader = new DatabaseLoader();
 		loader.executeSqlFile(properties, getClass().getResourceAsStream(getFileInBasePath(TEARDOWN_FILE)));
 	}
@@ -89,18 +116,8 @@ public class AcceptanceTest {
 		}
 	}
 	
-	private String getResourceAsString(String api, String file) throws IOException {
-		String resourceAsString = null;
-		
-		if (StringUtils.isNotBlank(file)) {
-			resourceAsString = IOUtils.toString(getClass().getResourceAsStream(getFileInResourcePath(api, file)), RESOURCE_ENCODING);
-		}
-		
-		return resourceAsString;
-	}
-	
-	private String getFileInResourcePath(String api, String resource) {
-		return String.format("/%s%s/%s", properties.getProperty(SCENARIOS_PATH_PROP), api, resource);
+	private String getFileInResourcePath(String api, String file) {
+		return String.format("/%s%s/%s", properties.getProperty(SCENARIOS_PATH_PROP), api, file);
 	}
 	
 	private String getFileInBasePath(String file) {
