@@ -10,6 +10,6 @@ Soon
 
 ## Technologies ##
 
-You Rest API can be written in any language
+Your Rest API can be written in any language
 
 Blackbox tests must be written in Java with JUnit
