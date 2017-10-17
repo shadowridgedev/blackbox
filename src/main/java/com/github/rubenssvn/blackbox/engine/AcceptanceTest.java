@@ -1,4 +1,4 @@
-package com.stefanini.blackbox.engine;
+package com.github.rubenssvn.blackbox.engine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,14 +16,14 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.stefanini.blackbox.annotation.Api;
-import com.stefanini.blackbox.annotation.Dataset;
-import com.stefanini.blackbox.annotation.Request;
-import com.stefanini.blackbox.annotation.Response;
-import com.stefanini.blackbox.database.DatabaseLoader;
-import com.stefanini.blackbox.exception.AcceptanceTestException;
-import com.stefanini.blackbox.http.RestClient;
-import com.stefanini.blackbox.http.RestResponse;
+import com.github.rubenssvn.blackbox.annotation.Api;
+import com.github.rubenssvn.blackbox.annotation.Dataset;
+import com.github.rubenssvn.blackbox.annotation.Request;
+import com.github.rubenssvn.blackbox.annotation.Response;
+import com.github.rubenssvn.blackbox.database.DatabaseLoader;
+import com.github.rubenssvn.blackbox.exception.AcceptanceTestException;
+import com.github.rubenssvn.blackbox.http.RestClient;
+import com.github.rubenssvn.blackbox.http.RestResponse;
 
 public class AcceptanceTest {
 	

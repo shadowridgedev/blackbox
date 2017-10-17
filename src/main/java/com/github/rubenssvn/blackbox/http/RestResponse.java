@@ -1,4 +1,4 @@
-package com.stefanini.blackbox.http;
+package com.github.rubenssvn.blackbox.http;
 
 import javax.ws.rs.core.Response;
 

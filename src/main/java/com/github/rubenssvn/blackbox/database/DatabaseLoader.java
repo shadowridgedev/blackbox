@@ -1,4 +1,4 @@
-package com.stefanini.blackbox.database;
+package com.github.rubenssvn.blackbox.database;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.stefanini.blackbox.exception.AcceptanceTestException;
+import com.github.rubenssvn.blackbox.exception.AcceptanceTestException;
 
 public final class DatabaseLoader {
 	

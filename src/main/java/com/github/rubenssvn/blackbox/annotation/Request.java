@@ -1,17 +1,18 @@
-package com.stefanini.blackbox.annotation;
+package com.github.rubenssvn.blackbox.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.core.Response.Status;
+import com.github.rubenssvn.blackbox.enums.RequestMethod;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Response {
+public @interface Request {
 
 	String body() default "";
-	Status httpStatus();
+	RequestMethod method();
+	String path() default "";
 	
 }

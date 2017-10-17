@@ -1,4 +1,4 @@
-package com.stefanini.blackbox.exception;
+package com.github.rubenssvn.blackbox.exception;
 
 public class AcceptanceTestException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package com.stefanini.blackbox.http;
+package com.github.rubenssvn.blackbox.http;
 
 import javax.ws.rs.core.MediaType;
 
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 
-import com.stefanini.blackbox.enums.RequestMethod;
+import com.github.rubenssvn.blackbox.enums.RequestMethod;
 
 public class RestClient {
 	

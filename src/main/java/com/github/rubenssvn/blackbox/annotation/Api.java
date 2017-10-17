@@ -1,4 +1,4 @@
-package com.stefanini.blackbox.annotation;
+package com.github.rubenssvn.blackbox.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
