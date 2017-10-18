@@ -12,16 +12,22 @@ public abstract class Blackbox {
 	private RequestMethod method;
 	private Object body;
 	private String path = "";
+	private String api;
 	
 	public abstract String getApi();
 	public abstract String getEndpoint();
 	public abstract String getJsonAsString(String file);
 	
 	public Blackbox requestHandler() {
-		method = null;
-		body = null;
-		path = "";
+		init();
+		api = null;
 		
+		return this;
+	}
+	
+	public Blackbox requestHandler(String api) {
+		init();
+		this.api = api;
 		return this;
 	}
 	
@@ -48,11 +54,18 @@ public abstract class Blackbox {
 	
 	public RestResponse call() {
 		try {
-			String resource = getEndpoint() + getApi() + path;
+			String api = this.api != null ? this.api : getApi();
+			String resource = getEndpoint() + api + path;
 			return RestClient.call(resource, body, method);
 		} catch (Exception e) {
 			throw new AcceptanceTestException(e);
 		}
+	}
+	
+	private void init() {
+		method = null;
+		body = null;
+		path = "";
 	}
 	
 }
