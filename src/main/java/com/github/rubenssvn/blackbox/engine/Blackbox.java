@@ -10,7 +10,7 @@ import com.github.rubenssvn.blackbox.http.RestResponse;
 public abstract class Blackbox {
 	
 	private RequestMethod method;
-	private String body;
+	private Object body;
 	private String path = "";
 	
 	public abstract String getApi();
@@ -18,6 +18,10 @@ public abstract class Blackbox {
 	public abstract String getJsonAsString(String file);
 	
 	public Blackbox requestHandler() {
+		method = null;
+		body = null;
+		path = "";
+		
 		return this;
 	}
 	
@@ -26,9 +30,11 @@ public abstract class Blackbox {
 		return this;
 	}
 	
-	public Blackbox body(String body) {
-		if (StringUtils.isNotBlank(body)) {
-			this.body = getJsonAsString(body);
+	public Blackbox body(Object body) {
+		if (body instanceof String && StringUtils.isNotBlank((String) body)) {
+			this.body = getJsonAsString((String) body);
+		} else if (!(body instanceof String)) {
+			this.body = body;
 		}
 		return this;
 	}
