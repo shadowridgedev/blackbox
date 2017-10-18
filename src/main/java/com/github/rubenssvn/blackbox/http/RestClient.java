@@ -25,7 +25,10 @@ public class RestClient {
 
 		RestResponse restResponse = new RestResponse();
 		restResponse.setStatus(response.getResponseStatus());
-		restResponse.setBody(new String(response.getEntity().getBytes(), "UTF-8"));
+		
+		if (response.getEntity() != null) {
+			restResponse.setBody(new String(response.getEntity().getBytes(), "UTF-8"));
+		}
 
 		return restResponse;
 	}
